@@ -4,12 +4,16 @@ export const initMocks = () => {
     if (typeof window === 'undefined') {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { server } = require('./server');
-      server.listen();
+      server.listen({
+        onUnhandledRequest: 'bypass',
+      });
     } else {
       // Run on Browser.
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { worker } = require('./browser');
-      worker.start();
+      worker.start({
+        onUnhandledRequest: 'bypass',
+      });
     }
   }
 };
