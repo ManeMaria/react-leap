@@ -42,7 +42,7 @@ export const Landing = () => {
         bgPosition="center"
         bgSize="cover"
       >
-        <LC.Vertical pos="relative" zIndex="banner" center>
+        <LC.Vertical pos="relative" zIndex="banner" center={true}>
           <LC.Vertical mb={8}>
             <Image src={reactLeapLetter} alt="React Leap" maxW="md" />
           </LC.Vertical>
