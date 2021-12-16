@@ -12,8 +12,40 @@ export const expenseHandlers = [
   rest.get(`${MOCK_API_URL}/expense`, (req, res, ctx) => {
     try {
       requireAuth(req);
-      const result = db.expense.findMany({});
+      const limit = req.url.searchParams.get('limit');
+      const offset = req.url.searchParams.get('offset');
+      const search = req.url.searchParams.get('search');
+      const order = req.url.searchParams.get('order');
 
+      const [column, ord] = order?.split(':') || ['', ''];
+      const paramsObject = {
+        ...(limit ? { take: Number(limit) } : null),
+        ...(offset ? { skip: Number(offset) } : null),
+        where: {
+          ...(search
+            ? {
+                description: {
+                  contains: search,
+                },
+              }
+            : ''),
+        },
+        ...(column ? { ['orderBy' as any]: { [column]: ord } } : null),
+      };
+      console.log(paramsObject);
+      const result = db.expense.findMany(paramsObject);
+      console.log('passou');
+      return delayedResponse(ctx.json(result));
+    } catch (error: any) {
+      console.log(error);
+      return delayedResponse(ctx.status(400), ctx.json({ message: error.message }));
+    }
+  }),
+
+  rest.get(`${MOCK_API_URL}/expense/count`, (req, res, ctx) => {
+    try {
+      requireAuth(req);
+      const result = db.expense.count();
       return delayedResponse(ctx.json(result));
     } catch (error: any) {
       return delayedResponse(ctx.status(400), ctx.json({ message: error.message }));

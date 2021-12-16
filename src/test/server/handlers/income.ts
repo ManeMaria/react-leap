@@ -12,8 +12,39 @@ export const incomeHandlers = [
   rest.get(`${MOCK_API_URL}/income`, (req, res, ctx) => {
     try {
       requireAuth(req);
-      const result = db.income.findMany({});
+      const limit = req.url.searchParams.get('limit');
+      const offset = req.url.searchParams.get('offset');
+      const search = req.url.searchParams.get('search');
+      const order = req.url.searchParams.get('order');
 
+      const [column, ord] = order?.split(':') || ['', ''];
+      const paramsObject = {
+        ...(limit ? { take: Number(limit) } : null),
+        ...(offset ? { skip: Number(offset) } : null),
+        where: {
+          ...(search
+            ? {
+                description: {
+                  contains: search,
+                },
+              }
+            : ''),
+        },
+        ...(column ? { ['orderBy' as any]: { [column]: ord } } : null),
+      };
+
+      const result = db.income.findMany(paramsObject);
+
+      return delayedResponse(ctx.json(result));
+    } catch (error: any) {
+      return delayedResponse(ctx.status(400), ctx.json({ message: error.message }));
+    }
+  }),
+
+  rest.get(`${MOCK_API_URL}/income/count`, (req, res, ctx) => {
+    try {
+      requireAuth(req);
+      const result = db.income.count();
       return delayedResponse(ctx.json(result));
     } catch (error: any) {
       return delayedResponse(ctx.status(400), ctx.json({ message: error.message }));
