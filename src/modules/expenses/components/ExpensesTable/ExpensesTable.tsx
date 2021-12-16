@@ -1,17 +1,24 @@
-import { Center, Spinner, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
-import { BsFillArchiveFill } from 'react-icons/bs';
 
-import { useExpenses } from '../../hooks/useExpenses';
 import { parseExpenseCategoryLabel } from '../../utils';
 
-import { Table } from './Table';
-
+import { Table, useTable, UseTableReturn } from '@/components/Table';
 export const ExpensesTable = () => {
-  const expensesQuery = useExpenses({});
-
-  const data = useMemo(() => expensesQuery?.data?.map((expense) => expense), [expensesQuery.data]);
+  const {
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    totalPages,
+    data,
+    loading,
+    setOrder,
+  }: UseTableReturn = useTable({
+    endpoint: '/expense',
+    entityName: 'expenses',
+    mockServer: true,
+  });
 
   const columns = useMemo(
     () => [
@@ -37,20 +44,19 @@ export const ExpensesTable = () => {
     [],
   );
 
-  if (expensesQuery.isLoading)
-    return (
-      <Center mt={8}>
-        <Spinner size="lg" />
-      </Center>
-    );
-
-  if (!expensesQuery?.data?.length)
-    return (
-      <Center mt={8}>
-        <BsFillArchiveFill />
-        <Text ml={4}>No Expenses Found</Text>
-      </Center>
-    );
-
-  return <Table data={data || []} columns={columns} mt={8} />;
+  return (
+    <Table
+      setPage={setPage}
+      setPageSize={setPageSize}
+      loadingData={loading}
+      page={page}
+      pageSize={pageSize}
+      totalPages={totalPages}
+      setOrder={setOrder}
+      data={data || []}
+      columns={columns}
+      noDataText={'No expenses'}
+      mt={8}
+    />
+  );
 };
