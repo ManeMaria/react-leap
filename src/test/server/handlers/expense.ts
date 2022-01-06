@@ -32,12 +32,11 @@ export const expenseHandlers = [
         },
         ...(column ? { ['orderBy' as any]: { [column]: ord } } : null),
       };
-      console.log(paramsObject);
+
       const result = db.expense.findMany(paramsObject);
-      console.log('passou');
+
       return delayedResponse(ctx.json(result));
     } catch (error: any) {
-      console.log(error);
       return delayedResponse(ctx.status(400), ctx.json({ message: error.message }));
     }
   }),

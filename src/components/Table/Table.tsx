@@ -15,14 +15,14 @@ import {
 import { useEffect } from 'react';
 import { BsFillArchiveFill } from 'react-icons/bs';
 import { GoTriangleUp, GoTriangleDown } from 'react-icons/go';
-import { useTable, useSortBy } from 'react-table';
+import { useTable, useSortBy, HeaderGroup } from 'react-table';
 
 import { PaginationBar } from '../PaginationBar';
 import { SearchBar } from '../SearchBar';
 
 import { TableP } from '.';
 
-function renderTableBody({ data, loadingData, noDataText, rows, prepareRow }) {
+const renderTableBody = ({ data, loadingData, noDataText, rows, prepareRow }) => {
   if (!data?.length && !loadingData)
     return (
       <Center position="absolute" left="50%" top="50%">
@@ -30,25 +30,27 @@ function renderTableBody({ data, loadingData, noDataText, rows, prepareRow }) {
         <Text ml={4}>{noDataText}</Text>
       </Center>
     );
+
   if (loadingData)
     return (
       <Center>
         <Spinner position="absolute" left="50%" top="50%" size="lg" />
       </Center>
     );
-  return rows.map((row, index) => {
+
+  return rows.map((row) => {
     prepareRow(row);
     return (
-      <Tr {...row.getRowProps()} key={index}>
-        {row.cells.map((cell, index) => (
-          <Td py={8} {...cell.getCellProps()} key={index}>
+      <Tr {...row.getRowProps()} key={row.id}>
+        {row.cells.map((cell) => (
+          <Td py={8} {...cell.getCellProps()} key={Math.random().toString()}>
             {cell.render('Cell')}
           </Td>
         ))}
       </Tr>
     );
   });
-}
+};
 
 export const Table = ({
   data,
@@ -101,13 +103,14 @@ export const Table = ({
         >
           <CTable {...getTableProps()} h="100%" w="100%" height={height}>
             <Thead width="100%" bgColor={bgHeader} shadow="lg">
-              {headerGroups.map((headerGroup, index) => (
-                <Tr key={index} {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column, index) => (
+              {headerGroups.map((headerGroup: HeaderGroup) => (
+                <Tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
+                  {console.log('HEADER GROUP', headerGroup)}
+                  {headerGroup.headers.map((column) => (
                     <Th
                       py={5}
                       color={colorHeader}
-                      key={index}
+                      key={column.id}
                       {...column.getHeaderProps(column.getSortByToggleProps())}
                     >
                       {column.render('Header')}

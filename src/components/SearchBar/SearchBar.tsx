@@ -1,12 +1,16 @@
-import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
+import {
+  BoxProps,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputGroupProps,
+  InputProps,
+} from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
 import { ChangeEvent } from 'react';
 import { BsSearch } from 'react-icons/bs';
-export type SearchFunc = (query: string) => void;
 
-type RandomObject = {
-  [field: string]: any;
-};
+export type SearchFunc = (query: string) => void;
 
 export type SearchBarProps = {
   search?: SearchFunc;
@@ -16,9 +20,9 @@ export type SearchBarProps = {
   debounceTime?: number;
   placeholder?: string;
   colorLetter?: string;
-  inputGroupProps?: RandomObject;
-  leftElementProps?: RandomObject;
-  inputProps?: RandomObject;
+  inputGroupProps?: InputGroupProps;
+  leftElementProps?: BoxProps;
+  inputProps?: InputProps;
   icon?: JSX.Element;
 };
 export const SearchBar = ({
@@ -34,12 +38,12 @@ export const SearchBar = ({
   leftElementProps = {},
   inputProps = {},
 }: SearchBarProps) => {
-  function changeInput(event: ChangeEvent<HTMLInputElement>) {
+  const changeInput = (event: ChangeEvent<HTMLInputElement>) => {
     if (search) {
       const query = event.target.value;
       search(query);
     }
-  }
+  };
 
   return (
     <InputGroup maxW={maxWidth} bg={background} borderRadius={borderRadius} {...inputGroupProps}>
