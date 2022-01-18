@@ -22,7 +22,7 @@ import { SearchBar } from '../SearchBar';
 
 import { TableP } from '.';
 
-function renderTableBody({ data, loadingData, noDataText, rows, prepareRow }) {
+const renderTableBody = ({ data, loadingData, noDataText, rows, prepareRow }) => {
   if (!data?.length && !loadingData)
     return (
       <Center position="absolute" left="50%" top="50%">
@@ -30,6 +30,7 @@ function renderTableBody({ data, loadingData, noDataText, rows, prepareRow }) {
         <Text ml={4}>{noDataText}</Text>
       </Center>
     );
+
   if (loadingData)
     return (
       <Center>
@@ -52,7 +53,7 @@ function renderTableBody({ data, loadingData, noDataText, rows, prepareRow }) {
       </Tr>
     );
   });
-}
+};
 
 const columnIsSortedDesc = (isSortedDesc: boolean) =>
   isSortedDesc ? (

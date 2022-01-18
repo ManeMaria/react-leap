@@ -1,5 +1,6 @@
 import Pagination from '@choc-ui/paginator';
 import { Dispatch, SetStateAction } from 'react';
+
 export type PaginationBarProps = {
   page: number;
   setPageSize: Dispatch<SetStateAction<number>>;
