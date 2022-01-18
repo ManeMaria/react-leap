@@ -20,10 +20,11 @@ export const useTable = ({
   const [order, setOrder] = useState<OrderObject>({ ord: '', column: '' });
   const [query, setQuery] = useState('');
   const [data, setData] = useState<any>([]);
+
   const {
     data: paginatedData,
-    isLoading: loadingPagData,
-    error: errorPagData,
+    isLoading: loadingPaginationData,
+    error: errorPaginationData,
   } = useQuery(
     [
       'getPaginatedData',
@@ -52,6 +53,7 @@ export const useTable = ({
         order,
       }),
   );
+
   const {
     data: count,
     isLoading: loadingCount,
@@ -59,7 +61,7 @@ export const useTable = ({
   } = useQuery(['count', mockServer, endpoint, query], () => getCount({ mockServer, endpoint }));
 
   useEffect(() => {
-    if (!errorPagData && paginatedData) {
+    if (!errorPaginationData && paginatedData) {
       if (entityName && paginatedData[entityName]) {
         setData(paginatedData[entityName]);
         return;
@@ -72,7 +74,7 @@ export const useTable = ({
     }
 
     setData([]);
-  }, [paginatedData, entityName, errorPagData]);
+  }, [paginatedData, entityName, errorPaginationData]);
 
   useEffect(() => {
     if (!errorCount && (count || count === 0)) {
@@ -85,7 +87,7 @@ export const useTable = ({
     setPage(1);
   }
 
-  const loading = loadingPagData || loadingCount;
+  const loading = loadingPaginationData || loadingCount;
 
   return {
     page,

@@ -36,12 +36,16 @@ function renderTableBody({ data, loadingData, noDataText, rows, prepareRow }) {
         <Spinner position="absolute" left="50%" top="50%" size="lg" />
       </Center>
     );
-  return rows.map((row, index) => {
+
+  const cellsWithId = (cells) =>
+    cells.map((cell) => ({ ...cell, id: cell.row.original.id + cell.value.toString() }));
+
+  return rows.map((row) => {
     prepareRow(row);
     return (
-      <Tr {...row.getRowProps()} key={index}>
-        {row.cells.map((cell, index) => (
-          <Td py={8} {...cell.getCellProps()} key={index}>
+      <Tr {...row.getRowProps()} key={row.id}>
+        {cellsWithId(row.cells).map((cell) => (
+          <Td py={8} {...cell.getCellProps()} key={cell.id}>
             {cell.render('Cell')}
           </Td>
         ))}
@@ -49,6 +53,13 @@ function renderTableBody({ data, loadingData, noDataText, rows, prepareRow }) {
     );
   });
 }
+
+const columnIsSortedDesc = (isSortedDesc: boolean) =>
+  isSortedDesc ? (
+    <GoTriangleUp aria-label="sorted descending" />
+  ) : (
+    <GoTriangleDown aria-label="sorted ascending" />
+  );
 
 export const Table = ({
   data,
@@ -86,6 +97,11 @@ export const Table = ({
     }
   }, [sortBy, setOrder]);
 
+  const headerGroupsWithId = headerGroups.map((headerGroup) => ({
+    ...headerGroup,
+    id: Math.random.toString(),
+  }));
+
   return (
     <Flex direction="column" justifyContent="flex-start" w="100%">
       {search && <SearchBar search={search} />}
@@ -101,24 +117,18 @@ export const Table = ({
         >
           <CTable {...getTableProps()} h="100%" w="100%" height={height}>
             <Thead width="100%" bgColor={bgHeader} shadow="lg">
-              {headerGroups.map((headerGroup, index) => (
-                <Tr key={index} {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column, index) => (
+              {headerGroupsWithId.map((headerGroup) => (
+                <Tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column) => (
                     <Th
                       py={5}
                       color={colorHeader}
-                      key={index}
+                      key={column.id}
                       {...column.getHeaderProps(column.getSortByToggleProps())}
                     >
                       {column.render('Header')}
                       <chakra.span pl="4" d="inline-block">
-                        {column.isSorted ? (
-                          column.isSortedDesc ? (
-                            <GoTriangleUp aria-label="sorted descending" />
-                          ) : (
-                            <GoTriangleDown aria-label="sorted ascending" />
-                          )
-                        ) : null}
+                        {column.isSorted ? columnIsSortedDesc(column.isSortedDesc) : null}
                       </chakra.span>
                     </Th>
                   ))}
